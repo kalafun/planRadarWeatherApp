@@ -20,29 +20,25 @@ class WeatherService: Service, WeatherServiceProtocol {
     
     // api.openweathermap.org/data/2.5/find?q=Vienna&appId=f5cb0b965ea1564c50c6f1b74534d823
     func searchCity(name: String) async throws -> SearchResponse {
-        let url = baseURL.appending(path: "find").appending(
+        let url = baseURL.appending(path: "data/2.5/find").appending(
             queryItems: [
                 URLQueryItem(name: "appId", value: Config.weatherAPIKey),
                 URLQueryItem(name: "q", value: name)
             ]
         )
         let request = URLRequest(url: url)
-        let (data, urlResponse) = try await URLSession.shared.data(for: request)
-
-        return try JSONDecoder().decode(SearchResponse.self, from: data)
+        return try await APIClient.shared.data(for: request)
     }
 
     func getWeatherInfo(city: String) async throws -> WeatherInfoResponse {
-        let url = baseURL.appending(path: "weather").appending(
+        let url = baseURL.appending(path: "data/2.5/weather").appending(
             queryItems: [
                 URLQueryItem(name: "appId", value: Config.weatherAPIKey),
                 URLQueryItem(name: "q", value: city)
             ]
         )
         let request = URLRequest(url: url)
-        let (data, urlResponse) = try await URLSession.shared.data(for: request)
-
-        return try JSONDecoder().decode(WeatherInfoResponse.self, from: data)
+        return try await APIClient.shared.data(for: request)
     }
 }
 

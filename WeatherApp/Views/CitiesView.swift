@@ -12,20 +12,39 @@ struct CitiesView: View {
 
     @Environment(\.managedObjectContext) private var viewContext
     @State var showsSearchCitiesView = false
+    @State var showsHistoricalView = false
+    @State var weatherDetailCity: City?
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \City.createdAt, ascending: true)],
-        animation: .default)
+        animation: .default
+    )
     private var items: FetchedResults<City>
 
     var body: some View {
         List {
             ForEach(items) { item in
-                //                        Text("Item at \(City.timestamp!, formatter: itemFormatter)")
-                Text(item.name ?? "")
-                    .foregroundStyle(Styler.Color.title)
-                    .font(.system(size: 17, weight: .bold))
-                    .listRowSeparatorTint(Styler.Color.button)
+                HStack(spacing: 20) {
+                    HStack() {
+                        Text(item.name ?? "")
+                            .foregroundStyle(Styler.Color.title)
+                            .font(.system(size: 17, weight: .bold))
+                            .listRowSeparatorTint(Styler.Color.button)
+
+                        Spacer()
+                    }
+                    .background()
+                    .onTapGesture {
+                        weatherDetailCity = item
+                    }
+
+                    Button {
+                        showsHistoricalView = true
+                    } label: {
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(Styler.Color.subtitle)
+                    }
+                }
                 //                        Text(item.timestamp!, formatter: itemFormatter)
             }
             //            .onDelete(perform: deleteItems)
@@ -57,29 +76,19 @@ struct CitiesView: View {
                 }
             }
         }
+        .navigationDestination(item: $weatherDetailCity) { city in
+            Text(city.name ?? "")
+        }
         .sheet(isPresented: $showsSearchCitiesView) {
             NavigationStack {
                 SearchCitiesView(viewModel: SearchCitiesView.ViewModel(moc: viewContext))
             }
         }
+        .sheet(isPresented: $showsHistoricalView) {
+            Text("Historical View is going to be here")
+        }
     }
 
-//    private func addItem() {
-//        withAnimation {
-//            let newItem = City(context: viewContext)
-//            newItem.createdAt = Date()
-//
-//            do {
-//                try viewContext.save()
-//            } catch {
-//                // Replace this implementation with code to handle the error appropriately.
-//                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//                let nsError = error as NSError
-//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-//            }
-//        }
-//    }
-//
 //    private func deleteItems(offsets: IndexSet) {
 //        withAnimation {
 //            offsets.map { items[$0] }.forEach(viewContext.delete)
@@ -96,29 +105,12 @@ struct CitiesView: View {
 //    }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
 #Preview {
     NavigationStack {
         CitiesView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
-
-//extension View {
-//    @available(iOS 14, *)
-//    func navigationBarTitleTextColor(_ color: Color) -> some View {
-//        let uiColor = UIColor(color)
-//        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: uiColor ]
-//        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: uiColor ]
-//        return self
-//    }
-//}
 
 extension View {
     @available(iOS 14, *)

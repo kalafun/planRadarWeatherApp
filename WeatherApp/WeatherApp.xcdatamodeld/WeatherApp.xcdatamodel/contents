@@ -6,7 +6,7 @@
         <relationship name="weatherInfo" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="WeatherInfo" inverseName="forCity" inverseEntity="WeatherInfo"/>
     </entity>
     <entity name="WeatherInfo" representedClassName="WeatherInfo" syncable="YES" codeGenerationType="class">
-        <attribute name="humidity" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="humidity" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="requestDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="temperature" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
         <attribute name="weatherDescription" optional="YES" attributeType="String"/>

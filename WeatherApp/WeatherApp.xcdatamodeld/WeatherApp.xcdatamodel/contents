@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="City" representedClassName="City" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="weatherInfo" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="WeatherInfo" inverseName="forCity" inverseEntity="WeatherInfo"/>
+    </entity>
+    <entity name="WeatherInfo" representedClassName="WeatherInfo" syncable="YES" codeGenerationType="class">
+        <attribute name="humidity" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="requestDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="temperature" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="weatherDescription" optional="YES" attributeType="String"/>
+        <attribute name="windSpeed" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="forCity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="City" inverseName="weatherInfo" inverseEntity="City"/>
+    </entity>
+</model>

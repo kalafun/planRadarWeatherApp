@@ -35,6 +35,7 @@ struct HistoricalInfoView: View {
         .onAppear {
             viewModel.fetchWeatherInfo()
         }
+        .showViewModelError(isPresented: $viewModel.showsError, message: viewModel.errorText)
         .navigationTitle((viewModel.city.name?.uppercased() ?? "") + " HISTORICAL")
         .navigationBarTitleDisplayMode(.inline)
     }

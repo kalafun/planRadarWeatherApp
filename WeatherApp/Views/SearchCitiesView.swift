@@ -34,6 +34,7 @@ struct SearchCitiesView: View {
                 }
             }
         }
+        .showViewModelError(isPresented: $viewModel.showsError, message: viewModel.errorText)
         .overlay {
             if viewModel.isLoading {
                 LoadingIndicator()

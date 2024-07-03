@@ -15,5 +15,15 @@ extension View {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: uiColor ]
         return self
     }
-}
 
+    func showViewModelError(isPresented: Binding<Bool>, message: String) -> some View {
+        alert(
+            "Ooopsie",
+            isPresented: isPresented,
+            actions: {},
+            message: {
+                Text(message)
+            }
+        )
+    }
+}

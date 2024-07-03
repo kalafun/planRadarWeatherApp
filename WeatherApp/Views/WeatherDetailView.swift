@@ -53,21 +53,22 @@ struct WeatherDetailView: View {
                 footer
             }
         }
-        .overlay {
-            if viewModel.isLoading {
-                LoadingIndicator()
-            }
-        }
-        .navigationTitle(viewModel.cityName)
-        .navigationBarTitleTextColor(Styler.Color.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: BackButton()) // Use the custom back button
         .onAppear {
             Task {
                 await viewModel.getWeatherInfo()
             }
         }
+        .overlay {
+            if viewModel.isLoading {
+                LoadingIndicator()
+            }
+        }
+        .showViewModelError(isPresented: $viewModel.showsError, message: viewModel.errorText)
+        .navigationTitle(viewModel.cityName)
+        .navigationBarTitleTextColor(Styler.Color.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: BackButton()) // Use the custom back button
     }
 
     private func infoRow(_ left: String, right: String) -> some View {

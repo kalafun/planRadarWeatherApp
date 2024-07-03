@@ -34,6 +34,7 @@ extension HistoricalInfoView {
                 }
             } catch {
                 print("Failed to fetch weather info: \(error)")
+                handleError(error: error)
             }
         }
     }

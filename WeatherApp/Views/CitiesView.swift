@@ -41,6 +41,7 @@ struct CitiesView: View {
         .onAppear {
             viewModel.fetchWeatherInfo()
         }
+        .showViewModelError(isPresented: $viewModel.showsError, message: viewModel.errorText)
         .padding(.top, 38)
         .listStyle(.plain)
         .navigationTitle("CITIES")

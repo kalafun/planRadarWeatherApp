@@ -73,7 +73,7 @@ extension WeatherDetailView {
                     self.isLoading = false
             } catch {
                 print(error)
-                // TODO: Error handling
+                handleError(error: error)
                 isLoading = false
             }
         }
@@ -91,10 +91,7 @@ extension WeatherDetailView {
                 try self.moc.save()
             } catch {
                 print(error)
-                // TODO: Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                handleError(error: error)
             }
         }
     }

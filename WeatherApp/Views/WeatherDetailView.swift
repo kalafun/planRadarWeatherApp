@@ -10,7 +10,6 @@ import SwiftUI
 
 struct WeatherDetailView: View {
 
-    @Environment(\.managedObjectContext) var viewContext
     @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: ViewModel
 
@@ -163,35 +162,67 @@ extension WeatherDetailView {
             isLoading = true
             do {
                 let response = try await weatherService.getWeatherInfo(city: cityName)
-                weatherInformation = response
-                timeUpdated = Date()
-                footerText = "weather information for \(cityName) received on".uppercased()
-                saveWeatherInfo(for: city, weatherInfo: response)
+                let timeUpdated = Date()
+                await MainActor.run { [weak self] in
+                    guard let self = self else { return }
+                    print("update view")
+                    self.weatherInformation = response
+                    self.timeUpdated = timeUpdated
+                    self.footerText = "weather information for \(cityName) received on".uppercased()
+                    self.saveWeatherInfo(for: city, weatherInfo: response, tiemUpdated: timeUpdated)
+                    self.isLoading = false
+                }
             } catch {
                 print(error)
                 // TODO: Error handling
+                isLoading = false
             }
-            isLoading = false
         }
 
-        private func saveWeatherInfo(for city: City, weatherInfo: WeatherInfoResponse) {
+        private func saveWeatherInfo(for city: City, weatherInfo: WeatherInfoResponse, tiemUpdated: Date) {
             let newItem = WeatherInfo(context: moc)
-            newItem.requestDate = Date()
+            newItem.requestDate = timeUpdated
             newItem.humidity = Int16(weatherInfo.main.humidity)
             newItem.temperature = weatherInfo.main.temp
             newItem.weatherDescription = weatherInfo.weather.description
             newItem.windSpeed = weatherInfo.wind.speed
-            newItem.forCity = city
+            newItem.city = city
+//            city.addToWeatherInfos(newItem)
 
             do {
                 try moc.save()
             } catch {
+                print(error)
                 // TODO: Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
+
+            print("DOne")
+            // Debug print to check relationships after saving
+            print("After saving:")
+            fetchCityAndValidate(city: city)
         }
+
+        private func fetchCityAndValidate(city: City) {
+            let fetchRequest: NSFetchRequest<City> = City.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "name == %@", city.name ?? "")
+
+            do {
+                if let fetchedCity = try moc.fetch(fetchRequest).first {
+                    print("Fetched City: \(fetchedCity.name ?? "No name"), Weather Infos count: \(fetchedCity.weatherInfos?.count ?? 0)")
+                    if let weatherInfos = fetchedCity.weatherInfos as? Set<WeatherInfo> {
+                        for info in weatherInfos {
+                            print("Weather Info - Date: \(info.requestDate), Temp: \(info.temperature)")
+                        }
+                    }
+                }
+            } catch {
+                print("Error fetching city: \(error)")
+            }
+        }
+
 
         private func kelvinToCelsius(kelvin: Float) -> Float {
             return kelvin - 273.15

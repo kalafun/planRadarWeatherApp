@@ -3,7 +3,7 @@
     <entity name="City" representedClassName="City" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="weatherInfo" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="WeatherInfo" inverseName="forCity" inverseEntity="WeatherInfo"/>
+        <relationship name="weatherInfos" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="WeatherInfo" inverseName="city" inverseEntity="WeatherInfo"/>
     </entity>
     <entity name="WeatherInfo" representedClassName="WeatherInfo" syncable="YES" codeGenerationType="class">
         <attribute name="humidity" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -11,6 +11,6 @@
         <attribute name="temperature" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="weatherDescription" optional="YES" attributeType="String"/>
         <attribute name="windSpeed" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <relationship name="forCity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="City" inverseName="weatherInfo" inverseEntity="City"/>
+        <relationship name="city" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="City" inverseName="weatherInfos" inverseEntity="City"/>
     </entity>
 </model>

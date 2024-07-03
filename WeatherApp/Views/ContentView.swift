@@ -9,9 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
 
+    @StateObject var citiesViewModel = CitiesView.ViewModel(moc: PersistenceController.shared.container.viewContext)
+
     var body: some View {
         NavigationStack {
-            CitiesView()
+            CitiesView(viewModel: citiesViewModel)
         }
     }
 }

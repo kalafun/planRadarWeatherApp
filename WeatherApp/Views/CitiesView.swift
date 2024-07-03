@@ -10,19 +10,11 @@ import SwiftUI
 
 struct CitiesView: View {
 
-    @StateObject var viewModel = CitiesView.ViewModel()
-
-    @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \City.createdAt, ascending: true)],
-        animation: .default
-    )
-    private var items: FetchedResults<City>
+    @ObservedObject var viewModel: CitiesView.ViewModel
 
     var body: some View {
         List {
-            ForEach(items) { item in
+            ForEach(viewModel.cities) { item in
                 HStack(spacing: 20) {
                     HStack() {
                         Text(item.name ?? "")
@@ -34,7 +26,7 @@ struct CitiesView: View {
                     }
                     .background()
                     .onTapGesture {
-                        viewModel.weatherDetailViewModel = WeatherDetailView.ViewModel(moc: viewContext, city: item)
+                        viewModel.weatherDetailViewModel = WeatherDetailView.ViewModel(moc: viewModel.moc, city: item)
                         viewModel.weatherDetailCity = item
                     }
 
@@ -45,9 +37,10 @@ struct CitiesView: View {
                             .foregroundStyle(Styler.Color.subtitle)
                     }
                 }
-                //                        Text(item.timestamp!, formatter: itemFormatter)
             }
-            //            .onDelete(perform: deleteItems)
+        }
+        .onAppear {
+            viewModel.fetchWeatherInfo()
         }
         .padding(.top, 38)
         .listStyle(.plain)
@@ -83,12 +76,12 @@ struct CitiesView: View {
         }
         .sheet(isPresented: $viewModel.showsSearchCitiesView) {
             NavigationStack {
-                SearchCitiesView(viewModel: SearchCitiesView.ViewModel(moc: viewContext))
+                SearchCitiesView(viewModel: SearchCitiesView.ViewModel(moc: viewModel.moc))
             }
         }
         .sheet(item: $viewModel.historicalCity) { historicalCity in
             NavigationStack {
-                HistoricalInfoView(viewModel: HistoricalInfoView.ViewModel(city: historicalCity, moc: viewContext))
+                HistoricalInfoView(viewModel: HistoricalInfoView.ViewModel(city: historicalCity, moc: viewModel.moc))
             }
         }
     }
@@ -96,8 +89,7 @@ struct CitiesView: View {
 
 #Preview {
     NavigationStack {
-        CitiesView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        CitiesView(viewModel: CitiesView.ViewModel(moc: PersistenceController.preview.container.viewContext))
     }
 }
 
@@ -105,9 +97,32 @@ extension CitiesView {
 
     @MainActor
     class ViewModel: AppViewModel {
+
+        @Published var cities = [City]()
+
         @Published var showsSearchCitiesView = false
         @Published var historicalCity: City?
         @Published var weatherDetailCity: City?
         @Published var weatherDetailViewModel: WeatherDetailView.ViewModel?
+
+        let moc: NSManagedObjectContext
+
+        init(moc: NSManagedObjectContext) {
+            self.moc = moc
+        }
+
+        func fetchWeatherInfo() {
+            let fetchRequest: NSFetchRequest<City> = City.fetchRequest()
+            fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \City.createdAt, ascending: true)]
+
+            do {
+                let result = try moc.fetch(fetchRequest)
+                DispatchQueue.main.async {
+                    self.cities = result
+                }
+            } catch {
+                print("Failed to fetch weather info: \(error)")
+            }
+        }
     }
 }

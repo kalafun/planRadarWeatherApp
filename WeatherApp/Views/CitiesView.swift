@@ -77,7 +77,7 @@ struct CitiesView: View {
             }
         }
         .navigationDestination(item: $weatherDetailCity) { city in
-            Text(city.name ?? "")
+            WeatherDetailView(viewModel: WeatherDetailView.ViewModel(cityName: city.name ?? ""))
         }
         .sheet(isPresented: $showsSearchCitiesView) {
             NavigationStack {

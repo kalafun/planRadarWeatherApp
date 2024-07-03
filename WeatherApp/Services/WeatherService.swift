@@ -45,6 +45,7 @@ class WeatherService: Service, WeatherServiceProtocol {
 struct WeatherInfoResponse: Decodable {
     struct Weather: Decodable {
         let description: String
+        let icon: String
     }
 
     struct Main: Decodable {
@@ -56,7 +57,7 @@ struct WeatherInfoResponse: Decodable {
         let speed: Float
     }
 
-    let weather: Weather
+    let weather: [Weather]
     let main: Main
     let wind: Wind
 }

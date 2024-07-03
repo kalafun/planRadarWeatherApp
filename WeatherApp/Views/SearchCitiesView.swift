@@ -35,6 +35,11 @@ struct SearchCitiesView: View {
                 }
             }
         }
+        .overlay {
+            if viewModel.isLoading {
+                LoadingIndicator()
+            }
+        }
         .navigationTitle("Enter city, postcode or airoport location")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -66,6 +71,7 @@ extension SearchCitiesView {
         }
 
         func searchCities(name: String) async {
+            isLoading = true
             do {
                 let response = try await weatherService.searchCity(name: name)
                 items = response.list.compactMap { cityDTO in
@@ -75,6 +81,7 @@ extension SearchCitiesView {
                 print(error)
                 // TODO: error handling
             }
+            isLoading = false
         }
 
         func add(cityItem: Item) {

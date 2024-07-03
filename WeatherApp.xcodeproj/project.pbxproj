@@ -75,10 +75,10 @@
 		C38333662C33F99000684DCF /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C3915C472C35998300930112 /* Misc */,
 				C38333642C33F88600684DCF /* CitiesView.swift */,
 				C38CDFE02C33E6E500465558 /* ContentView.swift */,
 				C3A0EB292C35460D00DC5460 /* HistoricalInfoView.swift */,
+				C3915C472C35998300930112 /* Misc */,
 				C383336E2C34420100684DCF /* SearchCitiesView.swift */,
 				C37333502C348E5D004EC179 /* WeatherDetailView.swift */,
 			);

@@ -115,10 +115,14 @@ extension WeatherDetailView {
                   let icon = weatherInformation.weather.first?.icon else { return nil }
             return URL(string: "https://openweathermap.org/img/wn/\(icon)@4x.png")
         }
-        var weatherDescription: String { weatherInformation?.weather.first?.description.capitalized ?? "" }
-        var temperature: String { weatherInformation?.main.temp.description ?? "" }
+        var weatherDescription: String { "\(weatherInformation?.weather.first?.description.capitalized ?? "")" }
+        var temperature: String {
+            guard let temperature = weatherInformation?.main.temp else { return "" }
+            let celsiusTemp = kelvinToCelsius(kelvin: temperature)
+            return formatTemperature(celsiusTemp)
+        }
         var humidity: String { "\(weatherInformation?.main.humidity ?? 0)%"}
-        var windSpeed: String { "\(weatherInformation?.wind.speed ?? 0)" + "km/h" }
+        var windSpeed: String { "\(weatherInformation?.wind.speed ?? 0)" + " km/h" }
 
         private let weatherService: WeatherServiceProtocol
 
@@ -141,30 +145,21 @@ extension WeatherDetailView {
             }
             isLoading = false
         }
-    }
-}
 
-struct BackButton: View {
+        func kelvinToCelsius(kelvin: Float) -> Float {
+            return kelvin - 273.15
+        }
 
-    @Environment(\.dismiss) var dismiss
+        func formatTemperature(_ temperature: Float) -> String {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            formatter.maximumFractionDigits = 1
 
-    var body: some View {
-        Button {
-            dismiss()
-        } label: {
-            ZStack {
-                Image("Button_left")
-                    .resizable()
-                    .frame(height: 90)
-                    .offset(x: -20, y: 18)
-                Image(systemName: "arrow.left")
-                    .foregroundStyle(Styler.Color.button)
-                    .offset(x: -30, y: 0)
+            if let formattedTemperature = formatter.string(from: NSNumber(value: temperature)) {
+                return formattedTemperature + "° C"
+            } else {
+                return "\(temperature)° C"
             }
         }
     }
-}
-
-#Preview("Back Button") {
-    BackButton()
 }

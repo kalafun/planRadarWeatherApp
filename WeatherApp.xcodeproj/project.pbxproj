@@ -27,6 +27,7 @@
 		C3915C4D2C359CFC00930112 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3915C4C2C359CFC00930112 /* AppViewModel.swift */; };
 		C3915C4F2C359D1500930112 /* SearchCitiesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3915C4E2C359D1500930112 /* SearchCitiesViewModel.swift */; };
 		C3915C512C359D3600930112 /* HistoricalInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3915C502C359D3600930112 /* HistoricalInfoViewModel.swift */; };
+		C3915C532C359F6700930112 /* CitiesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3915C522C359F6700930112 /* CitiesViewModel.swift */; };
 		C3A0EB2A2C35460D00DC5460 /* HistoricalInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A0EB292C35460D00DC5460 /* HistoricalInfoView.swift */; };
 		C3BF92D12C347F6E001B3031 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3BF92D02C347F6E001B3031 /* APIClient.swift */; };
 		C3D9B4A62C352814004F4458 /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D9B4A52C352813004F4458 /* BackButton.swift */; };
@@ -54,6 +55,7 @@
 		C3915C4C2C359CFC00930112 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		C3915C4E2C359D1500930112 /* SearchCitiesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCitiesViewModel.swift; sourceTree = "<group>"; };
 		C3915C502C359D3600930112 /* HistoricalInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalInfoViewModel.swift; sourceTree = "<group>"; };
+		C3915C522C359F6700930112 /* CitiesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitiesViewModel.swift; sourceTree = "<group>"; };
 		C3A0EB292C35460D00DC5460 /* HistoricalInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalInfoView.swift; sourceTree = "<group>"; };
 		C3BF92D02C347F6E001B3031 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		C3D9B4A52C352813004F4458 /* BackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				C3915C4C2C359CFC00930112 /* AppViewModel.swift */,
+				C3915C522C359F6700930112 /* CitiesViewModel.swift */,
 				C3915C502C359D3600930112 /* HistoricalInfoViewModel.swift */,
 				C3915C4E2C359D1500930112 /* SearchCitiesViewModel.swift */,
 				C3915C4A2C359CD800930112 /* WeatherDetailViewModel.swift */,
@@ -243,6 +246,7 @@
 				C383336A2C34366500684DCF /* Styler.swift in Sources */,
 				C37333532C348F09004EC179 /* LoadingIndicator.swift in Sources */,
 				C3915C462C3598DF00930112 /* View+Extensions.swift in Sources */,
+				C3915C532C359F6700930112 /* CitiesViewModel.swift in Sources */,
 				C3915C4B2C359CD800930112 /* WeatherDetailViewModel.swift in Sources */,
 				C38CDFE82C33E6E600465558 /* Persistence.swift in Sources */,
 				C3BF92D12C347F6E001B3031 /* APIClient.swift in Sources */,

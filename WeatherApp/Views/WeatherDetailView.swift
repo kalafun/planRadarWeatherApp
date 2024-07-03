@@ -10,7 +10,6 @@ import SwiftUI
 
 struct WeatherDetailView: View {
 
-    @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: ViewModel
 
     var body: some View {
@@ -89,10 +88,8 @@ struct WeatherDetailView: View {
             Text(viewModel.footerText)
                 .multilineTextAlignment(.center)
                 .font(.system(size: 12, weight: .regular))
-            if let timeUpdatedString = viewModel.timeUpdatedString {
-                Text(timeUpdatedString)
-                    .font(.system(size: 12, weight: .regular))
-            }
+            Text(viewModel.timeUpdatedString)
+                .font(.system(size: 12, weight: .regular))
         }
     }
 }
@@ -118,34 +115,42 @@ extension WeatherDetailView {
     class ViewModel: AppViewModel {
 
         // MARK: Init parameters
-        let city: City
+        var city: City
         private let moc: NSManagedObjectContext
         private let weatherService: WeatherServiceProtocol
 
         // MARK: Published properties
-        @Published var weatherInformation: WeatherInfoResponse?
+        @Published var weatherInfoResponse: WeatherInfoResponse?
+
         @Published var footerText: String = ""
-        @Published var timeUpdatedString: String?
+        var timeUpdated: Date?
 
         // MARK: computed properties
-        var timeUpdated: Date? {
-            didSet {
-                timeUpdatedString = timeUpdated?.formatted(date: .numeric, time: .shortened)
-            }
+        var cityName: String {
+            city.name ?? ""
         }
-        var cityName: String { city.name ?? "" }
+        var timeUpdatedString: String {
+            timeUpdated?.formatted(date: .numeric, time: .shortened) ?? ""
+        }
+
         var weatherIconURL: URL? {
-            guard let weatherInformation = weatherInformation,
+            guard let weatherInformation = weatherInfoResponse,
                   let icon = weatherInformation.weather.first?.icon else { return nil }
             return URL(string: "https://openweathermap.org/img/wn/\(icon)@4x.png")
         }
-        var weatherDescription: String { "\(weatherInformation?.weather.first?.description.capitalized ?? "")" }
+        var weatherDescription: String {
+            weatherInfoResponse?.weather.first?.description.capitalized ?? ""
+        }
         var temperature: String {
-            guard let temperature = weatherInformation?.main.temp else { return "" }
+            guard let temperature = weatherInfoResponse?.main.temp else { return "" }
             return WeatherFormatter.formatTemperature(temperature)
         }
-        var humidity: String { "\(weatherInformation?.main.humidity ?? 0)%"}
-        var windSpeed: String { "\(weatherInformation?.wind.speed ?? 0)" + " km/h" }
+        var humidity: String {
+            "\(weatherInfoResponse?.main.humidity ?? 0)%"
+        }
+        var windSpeed: String {
+            "\(weatherInfoResponse?.wind.speed ?? 0)" + " km/h"
+        }
 
         init(
             moc: NSManagedObjectContext,
@@ -162,15 +167,12 @@ extension WeatherDetailView {
             do {
                 let response = try await weatherService.getWeatherInfo(city: cityName)
                 let timeUpdated = Date()
-                await MainActor.run { [weak self] in
-                    guard let self = self else { return }
                     print("update view")
-                    self.weatherInformation = response
+                    self.weatherInfoResponse = response
                     self.timeUpdated = timeUpdated
                     self.footerText = "weather information for \(cityName) received on".uppercased()
-                    self.saveWeatherInfo(for: city, weatherInfo: response, tiemUpdated: timeUpdated)
+                    saveWeatherInfo(for: city, weatherInfo: weatherInfoResponse!, tiemUpdated: timeUpdated)
                     self.isLoading = false
-                }
             } catch {
                 print(error)
                 // TODO: Error handling
@@ -178,7 +180,7 @@ extension WeatherDetailView {
             }
         }
 
-        private func saveWeatherInfo(for city: City, weatherInfo: WeatherInfoResponse, tiemUpdated: Date) {
+        func saveWeatherInfo(for city: City, weatherInfo: WeatherInfoResponse, tiemUpdated: Date) {
             let newItem = WeatherInfo(context: moc)
             newItem.requestDate = timeUpdated
             newItem.humidity = Int16(weatherInfo.main.humidity)
@@ -186,19 +188,20 @@ extension WeatherDetailView {
             newItem.weatherDescription = weatherInfo.weather.first?.description ?? ""
             newItem.windSpeed = weatherInfo.wind.speed
             newItem.city = city
-//            city.addToWeatherInfos(newItem)
 
-            do {
-                try moc.save()
-            } catch {
-                print(error)
-                // TODO: Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            DispatchQueue.main.async {
+                do {
+                    try self.moc.save()
+                } catch {
+                    print(error)
+                    // TODO: Replace this implementation with code to handle the error appropriately.
+                    // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                    let nsError = error as NSError
+                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                }
             }
 
-            print("DOne")
+            print("Done")
             // Debug print to check relationships after saving
             print("After saving:")
             fetchCityAndValidate(city: city)

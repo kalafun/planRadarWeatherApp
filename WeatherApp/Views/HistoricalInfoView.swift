@@ -10,9 +10,6 @@ import SwiftUI
 
 struct HistoricalInfoView: View {
 
-//    let fetchRequest: NSFetchRequest<City> = City.fetchRequest()
-//    fetchRequest.predicate = NSPredicate(format: "name == %@", city.name ?? "")
-
     private var fetchRequest: FetchRequest<WeatherInfo>
     private var items: FetchedResults<WeatherInfo> { fetchRequest.wrappedValue }
     private let city: City
@@ -27,7 +24,7 @@ struct HistoricalInfoView: View {
 
         self.fetchRequest = FetchRequest<WeatherInfo>(
             entity: WeatherInfo.entity(),
-            sortDescriptors: [NSSortDescriptor(keyPath: \WeatherInfo.requestDate, ascending: true)],
+            sortDescriptors: [NSSortDescriptor(keyPath: \WeatherInfo.requestDate, ascending: false)],
             predicate: predicate,
             animation: .default
         )

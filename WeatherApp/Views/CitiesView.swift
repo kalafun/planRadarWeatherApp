@@ -14,6 +14,7 @@ struct CitiesView: View {
     @State var showsSearchCitiesView = false
     @State var historicalCity: City?
     @State var weatherDetailCity: City?
+    @State var weatherDetailViewModel: WeatherDetailView.ViewModel?
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \City.createdAt, ascending: true)],
@@ -35,6 +36,7 @@ struct CitiesView: View {
                     }
                     .background()
                     .onTapGesture {
+                        weatherDetailViewModel = WeatherDetailView.ViewModel(moc: viewContext, city: item)
                         weatherDetailCity = item
                     }
 
@@ -77,12 +79,9 @@ struct CitiesView: View {
             }
         }
         .navigationDestination(item: $weatherDetailCity) { city in
-            WeatherDetailView(
-                viewModel: WeatherDetailView.ViewModel(
-                    moc: viewContext,
-                    city: city
-                )
-            )
+            if let weatherDetailViewModel = weatherDetailViewModel {
+                WeatherDetailView(viewModel: weatherDetailViewModel)
+            }
         }
         .sheet(isPresented: $showsSearchCitiesView) {
             NavigationStack {
@@ -95,21 +94,6 @@ struct CitiesView: View {
             }
         }
     }
-
-//    private func deleteItems(offsets: IndexSet) {
-//        withAnimation {
-//            offsets.map { items[$0] }.forEach(viewContext.delete)
-//
-//            do {
-//                try viewContext.save()
-//            } catch {
-//                // Replace this implementation with code to handle the error appropriately.
-//                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//                let nsError = error as NSError
-//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-//            }
-//        }
-//    }
 }
 
 #Preview {

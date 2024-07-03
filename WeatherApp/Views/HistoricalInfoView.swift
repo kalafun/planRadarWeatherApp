@@ -10,30 +10,12 @@ import SwiftUI
 
 struct HistoricalInfoView: View {
 
-    private var fetchRequest: FetchRequest<WeatherInfo>
-    private var items: FetchedResults<WeatherInfo> { fetchRequest.wrappedValue }
-    private let city: City
-
-    init(city: City) {
-        self.city = city
-
-        var predicate: NSPredicate?
-        if let cityName = city.name {
-            predicate = NSPredicate(format: "city.name == %@", cityName)
-        }
-
-        self.fetchRequest = FetchRequest<WeatherInfo>(
-            entity: WeatherInfo.entity(),
-            sortDescriptors: [NSSortDescriptor(keyPath: \WeatherInfo.requestDate, ascending: false)],
-            predicate: predicate,
-            animation: .default
-        )
-    }
+    @ObservedObject var viewModel: HistoricalInfoView.ViewModel
 
     var body: some View {
         VStack {
             List {
-                ForEach(items) { item in
+                ForEach(viewModel.weatherInfos) { item in
                     VStack(alignment: .leading) {
                         if let requestDate = item.requestDate {
                             Text(requestDate.formatted(date: .numeric, time: .shortened))
@@ -50,7 +32,10 @@ struct HistoricalInfoView: View {
             }
             .listStyle(.plain)
         }
-        .navigationTitle((city.name?.uppercased() ?? "") + " HISTORICAL")
+        .onAppear {
+            viewModel.fetchWeatherInfo()
+        }
+        .navigationTitle((viewModel.city.name?.uppercased() ?? "") + " HISTORICAL")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -61,6 +46,38 @@ struct HistoricalInfoView: View {
     city.name = "Vienna"
 
     return NavigationStack {
-        HistoricalInfoView(city: city)
+        HistoricalInfoView(viewModel: HistoricalInfoView.ViewModel(city: city, moc: context))
+    }
+}
+
+extension HistoricalInfoView {
+
+    @MainActor
+    class ViewModel: AppViewModel {
+        @Published var weatherInfos = [WeatherInfo]()
+        @Published var city: City
+
+        var moc: NSManagedObjectContext
+
+        init(city: City, moc: NSManagedObjectContext) {
+            self.city = city
+            self.moc = moc
+        }
+
+        func fetchWeatherInfo() {
+            let fetchRequest: NSFetchRequest<WeatherInfo> = WeatherInfo.fetchRequest()
+            fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \WeatherInfo.requestDate, ascending: false)]
+            fetchRequest.predicate = NSPredicate(format: "city == %@", city)
+
+            do {
+                let result = try moc.fetch(fetchRequest)
+                DispatchQueue.main.async {
+                    self.weatherInfos = result
+                }
+            } catch {
+                print("Failed to fetch weather info: \(error)")
+            }
+        }
+
     }
 }

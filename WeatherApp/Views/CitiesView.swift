@@ -88,7 +88,7 @@ struct CitiesView: View {
         }
         .sheet(item: $viewModel.historicalCity) { historicalCity in
             NavigationStack {
-                HistoricalInfoView(city: historicalCity)
+                HistoricalInfoView(viewModel: HistoricalInfoView.ViewModel(city: historicalCity, moc: viewContext))
             }
         }
     }

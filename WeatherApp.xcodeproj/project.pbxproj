@@ -21,6 +21,7 @@
 		C38CDFE62C33E6E600465558 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C38CDFE52C33E6E600465558 /* Preview Assets.xcassets */; };
 		C38CDFE82C33E6E600465558 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C38CDFE72C33E6E600465558 /* Persistence.swift */; };
 		C38CDFEB2C33E6E600465558 /* WeatherApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C38CDFE92C33E6E600465558 /* WeatherApp.xcdatamodeld */; };
+		C3915C462C3598DF00930112 /* View+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3915C452C3598DF00930112 /* View+Extensions.swift */; };
 		C3A0EB2A2C35460D00DC5460 /* HistoricalInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A0EB292C35460D00DC5460 /* HistoricalInfoView.swift */; };
 		C3BF92D12C347F6E001B3031 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3BF92D02C347F6E001B3031 /* APIClient.swift */; };
 		C3D9B4A62C352814004F4458 /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D9B4A52C352813004F4458 /* BackButton.swift */; };
@@ -42,6 +43,7 @@
 		C38CDFE52C33E6E600465558 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C38CDFE72C33E6E600465558 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		C38CDFEA2C33E6E600465558 /* WeatherApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WeatherApp.xcdatamodel; sourceTree = "<group>"; };
+		C3915C452C3598DF00930112 /* View+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extensions.swift"; sourceTree = "<group>"; };
 		C3A0EB292C35460D00DC5460 /* HistoricalInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalInfoView.swift; sourceTree = "<group>"; };
 		C3BF92D02C347F6E001B3031 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		C3D9B4A52C352813004F4458 /* BackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				C383336C2C3436D900684DCF /* Color+Extensions.swift */,
+				C3915C452C3598DF00930112 /* View+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -214,6 +217,7 @@
 				C383336D2C3436D900684DCF /* Color+Extensions.swift in Sources */,
 				C383336A2C34366500684DCF /* Styler.swift in Sources */,
 				C37333532C348F09004EC179 /* LoadingIndicator.swift in Sources */,
+				C3915C462C3598DF00930112 /* View+Extensions.swift in Sources */,
 				C38CDFE82C33E6E600465558 /* Persistence.swift in Sources */,
 				C3BF92D12C347F6E001B3031 /* APIClient.swift in Sources */,
 				C38CDFE12C33E6E500465558 /* ContentView.swift in Sources */,

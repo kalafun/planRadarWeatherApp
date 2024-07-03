@@ -10,11 +10,9 @@ import SwiftUI
 
 struct CitiesView: View {
 
+    @StateObject var viewModel = CitiesView.ViewModel()
+
     @Environment(\.managedObjectContext) private var viewContext
-    @State var showsSearchCitiesView = false
-    @State var historicalCity: City?
-    @State var weatherDetailCity: City?
-    @State var weatherDetailViewModel: WeatherDetailView.ViewModel?
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \City.createdAt, ascending: true)],
@@ -36,12 +34,12 @@ struct CitiesView: View {
                     }
                     .background()
                     .onTapGesture {
-                        weatherDetailViewModel = WeatherDetailView.ViewModel(moc: viewContext, city: item)
-                        weatherDetailCity = item
+                        viewModel.weatherDetailViewModel = WeatherDetailView.ViewModel(moc: viewContext, city: item)
+                        viewModel.weatherDetailCity = item
                     }
 
                     Button {
-                        historicalCity = item
+                        viewModel.historicalCity = item
                     } label: {
                         Image(systemName: "chevron.right")
                             .foregroundStyle(Styler.Color.subtitle)
@@ -69,7 +67,7 @@ struct CitiesView: View {
                     }
 
                     Button {
-                        showsSearchCitiesView = true
+                        viewModel.showsSearchCitiesView = true
                     } label: {
                         Image(systemName: "plus")
                     }
@@ -78,17 +76,17 @@ struct CitiesView: View {
                 }
             }
         }
-        .navigationDestination(item: $weatherDetailCity) { city in
-            if let weatherDetailViewModel = weatherDetailViewModel {
+        .navigationDestination(item: $viewModel.weatherDetailCity) { city in
+            if let weatherDetailViewModel = viewModel.weatherDetailViewModel {
                 WeatherDetailView(viewModel: weatherDetailViewModel)
             }
         }
-        .sheet(isPresented: $showsSearchCitiesView) {
+        .sheet(isPresented: $viewModel.showsSearchCitiesView) {
             NavigationStack {
                 SearchCitiesView(viewModel: SearchCitiesView.ViewModel(moc: viewContext))
             }
         }
-        .sheet(item: $historicalCity) { historicalCity in
+        .sheet(item: $viewModel.historicalCity) { historicalCity in
             NavigationStack {
                 HistoricalInfoView(city: historicalCity)
             }
@@ -103,12 +101,13 @@ struct CitiesView: View {
     }
 }
 
-extension View {
-    @available(iOS 14, *)
-    func navigationBarTitleTextColor(_ color: Color) -> some View {
-        let uiColor = UIColor(color)
-        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: uiColor ]
-        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: uiColor ]
-        return self
+extension CitiesView {
+
+    @MainActor
+    class ViewModel: AppViewModel {
+        @Published var showsSearchCitiesView = false
+        @Published var historicalCity: City?
+        @Published var weatherDetailCity: City?
+        @Published var weatherDetailViewModel: WeatherDetailView.ViewModel?
     }
 }

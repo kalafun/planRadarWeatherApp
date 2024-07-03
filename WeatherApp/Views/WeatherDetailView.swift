@@ -142,8 +142,7 @@ extension WeatherDetailView {
         var weatherDescription: String { "\(weatherInformation?.weather.first?.description.capitalized ?? "")" }
         var temperature: String {
             guard let temperature = weatherInformation?.main.temp else { return "" }
-            let celsiusTemp = kelvinToCelsius(kelvin: temperature)
-            return formatTemperature(celsiusTemp)
+            return WeatherFormatter.formatTemperature(temperature)
         }
         var humidity: String { "\(weatherInformation?.main.humidity ?? 0)%"}
         var windSpeed: String { "\(weatherInformation?.wind.speed ?? 0)" + " km/h" }
@@ -184,7 +183,7 @@ extension WeatherDetailView {
             newItem.requestDate = timeUpdated
             newItem.humidity = Int16(weatherInfo.main.humidity)
             newItem.temperature = weatherInfo.main.temp
-            newItem.weatherDescription = weatherInfo.weather.description
+            newItem.weatherDescription = weatherInfo.weather.first?.description ?? ""
             newItem.windSpeed = weatherInfo.wind.speed
             newItem.city = city
 //            city.addToWeatherInfos(newItem)
@@ -222,22 +221,27 @@ extension WeatherDetailView {
                 print("Error fetching city: \(error)")
             }
         }
+    }
+}
 
+struct WeatherFormatter {
+    private static let formatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 1
+        return formatter
+    }()
 
-        private func kelvinToCelsius(kelvin: Float) -> Float {
-            return kelvin - 273.15
-        }
+    private static func kelvinToCelsius(kelvin: Float) -> Float {
+        return kelvin - 273.15
+    }
 
-        private func formatTemperature(_ temperature: Float) -> String {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            formatter.maximumFractionDigits = 1
-
-            if let formattedTemperature = formatter.string(from: NSNumber(value: temperature)) {
-                return formattedTemperature + "° C"
-            } else {
-                return "\(temperature)° C"
-            }
+    static func formatTemperature(_ temperature: Float) -> String {
+        let temperature = kelvinToCelsius(kelvin: temperature)
+        if let formattedTemperature = formatter.string(from: NSNumber(value: temperature)) {
+            return formattedTemperature + "° C"
+        } else {
+            return "\(temperature)° C"
         }
     }
 }

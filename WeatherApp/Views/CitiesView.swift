@@ -12,7 +12,7 @@ struct CitiesView: View {
 
     @Environment(\.managedObjectContext) private var viewContext
     @State var showsSearchCitiesView = false
-    @State var showsHistoricalView = false
+    @State var historicalCity: City?
     @State var weatherDetailCity: City?
 
     @FetchRequest(
@@ -39,7 +39,7 @@ struct CitiesView: View {
                     }
 
                     Button {
-                        showsHistoricalView = true
+                        historicalCity = item
                     } label: {
                         Image(systemName: "chevron.right")
                             .foregroundStyle(Styler.Color.subtitle)
@@ -89,8 +89,10 @@ struct CitiesView: View {
                 SearchCitiesView(viewModel: SearchCitiesView.ViewModel(moc: viewContext))
             }
         }
-        .sheet(isPresented: $showsHistoricalView) {
-            Text("Historical View is going to be here")
+        .sheet(item: $historicalCity) { historicalCity in
+            NavigationStack {
+                HistoricalInfoView(city: historicalCity)
+            }
         }
     }
 

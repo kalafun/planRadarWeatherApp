@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BackButton: View {
 
+    @EnvironmentObject var styler: Styler
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -21,7 +22,7 @@ struct BackButton: View {
                     .frame(height: 90)
                     .offset(x: -20, y: 18)
                 Image(systemName: "arrow.left")
-                    .foregroundStyle(Styler.Color.button)
+                    .foregroundStyle(styler.buttonColor)
                     .offset(x: -30, y: 0)
             }
         }

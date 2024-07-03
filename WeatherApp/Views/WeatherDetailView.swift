@@ -9,10 +9,14 @@ import SwiftUI
 
 struct WeatherDetailView: View {
 
+    @EnvironmentObject var styler: Styler
     @ObservedObject var viewModel: ViewModel
 
     var body: some View {
         ZStack {
+            styler.backgroundColor
+                .ignoresSafeArea()
+
             VStack {
                 Spacer()
                 Image("Background")
@@ -42,7 +46,7 @@ struct WeatherDetailView: View {
                 .padding(.horizontal, 30)
                 .padding(.top, 55)
                 .padding(.bottom, 45)
-                .background()
+                .background(styler.detailBackgroundColor)
                 .clipShape(RoundedRectangle(cornerRadius: 25))
                 .shadow(color: .black.opacity(0.2), radius: 30, y: 20)
                 .padding(.horizontal, 50)
@@ -65,7 +69,7 @@ struct WeatherDetailView: View {
         }
         .showViewModelError(isPresented: $viewModel.showsError, message: viewModel.errorText)
         .navigationTitle(viewModel.cityName)
-        .navigationBarTitleTextColor(Styler.Color.title)
+        .navigationBarTitleTextColor(styler.titleColor)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: BackButton()) // Use the custom back button
@@ -76,10 +80,11 @@ struct WeatherDetailView: View {
             Text(left)
                 .textCase(.uppercase)
                 .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(styler.titleColor)
             Spacer()
             Text(right)
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(Styler.Color.subtitle)
+                .foregroundStyle(styler.subtitleColor)
         }
     }
 
@@ -91,6 +96,7 @@ struct WeatherDetailView: View {
             Text(viewModel.timeUpdatedString)
                 .font(.system(size: 12, weight: .regular))
         }
+        .foregroundStyle(styler.footerColor)
     }
 }
 
@@ -106,5 +112,9 @@ struct WeatherDetailView: View {
                 city: city
             )
         )
+        .environmentObject(Styler.shared)
+    }
+    .onAppear {
+        Styler.shared.colorScheme = .dark
     }
 }

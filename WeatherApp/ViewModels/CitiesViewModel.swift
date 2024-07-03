@@ -19,22 +19,22 @@ extension CitiesView {
         @Published var historicalCity: City?
         @Published var weatherDetailCity: City?
         @Published var weatherDetailViewModel: WeatherDetailView.ViewModel?
+        @Published var searchCitiesViewModel: SearchCitiesView.ViewModel
 
         let moc: NSManagedObjectContext
 
         init(moc: NSManagedObjectContext) {
             self.moc = moc
+
+            searchCitiesViewModel = SearchCitiesView.ViewModel(moc: moc)
         }
 
-        func fetchWeatherInfo() {
+        func fetchCities() {
             let fetchRequest: NSFetchRequest<City> = City.fetchRequest()
             fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \City.createdAt, ascending: true)]
 
             do {
-                let result = try moc.fetch(fetchRequest)
-                DispatchQueue.main.async {
-                    self.cities = result
-                }
+                cities = try moc.fetch(fetchRequest)
             } catch {
                 print("Failed to fetch weather info: \(error)")
                 handleError(error: error)

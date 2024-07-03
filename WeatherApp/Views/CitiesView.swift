@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CitiesView: View {
 
+    @EnvironmentObject var styler: Styler
     @ObservedObject var viewModel: CitiesView.ViewModel
 
     var body: some View {
@@ -17,13 +18,13 @@ struct CitiesView: View {
                 HStack(spacing: 20) {
                     HStack() {
                         Text(item.name ?? "")
-                            .foregroundStyle(Styler.Color.title)
+                            .foregroundStyle(styler.titleColor)
                             .font(.system(size: 17, weight: .bold))
-                            .listRowSeparatorTint(Styler.Color.button)
+                            .listRowSeparatorTint(styler.buttonColor)
 
                         Spacer()
                     }
-                    .background()
+                    .background(styler.backgroundColor)
                     .onTapGesture {
                         viewModel.weatherDetailViewModel = WeatherDetailView.ViewModel(moc: viewModel.moc, city: item)
                         viewModel.weatherDetailCity = item
@@ -33,19 +34,20 @@ struct CitiesView: View {
                         viewModel.historicalCity = item
                     } label: {
                         Image(systemName: "chevron.right")
-                            .foregroundStyle(Styler.Color.subtitle)
+                            .foregroundStyle(styler.subtitleColor)
                     }
                 }
+                .listRowBackground(styler.backgroundColor)
             }
         }
         .onAppear {
-            viewModel.fetchWeatherInfo()
+            viewModel.fetchCities()
         }
         .showViewModelError(isPresented: $viewModel.showsError, message: viewModel.errorText)
         .padding(.top, 38)
         .listStyle(.plain)
         .navigationTitle("CITIES")
-        .navigationBarTitleTextColor(Styler.Color.title)
+        .navigationBarTitleTextColor(styler.titleColor)
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem {
@@ -65,10 +67,11 @@ struct CitiesView: View {
                         Image(systemName: "plus")
                     }
                     .offset(x: 24)
-                    .tint(Styler.Color.button)
+                    .tint(styler.buttonColor)
                 }
             }
         }
+        .background(styler.backgroundColor)
         .navigationDestination(item: $viewModel.weatherDetailCity) { city in
             if let weatherDetailViewModel = viewModel.weatherDetailViewModel {
                 WeatherDetailView(viewModel: weatherDetailViewModel)
@@ -76,8 +79,10 @@ struct CitiesView: View {
         }
         .sheet(isPresented: $viewModel.showsSearchCitiesView) {
             NavigationStack {
-                SearchCitiesView(viewModel: SearchCitiesView.ViewModel(moc: viewModel.moc))
+                SearchCitiesView(viewModel: viewModel.searchCitiesViewModel)
+                    .environmentObject(viewModel)
             }
+            .tint(styler.subtitleColor)
         }
         .sheet(item: $viewModel.historicalCity) { historicalCity in
             NavigationStack {
@@ -90,5 +95,9 @@ struct CitiesView: View {
 #Preview {
     NavigationStack {
         CitiesView(viewModel: CitiesView.ViewModel(moc: PersistenceController.preview.container.viewContext))
+    }
+    .environmentObject(Styler.shared)
+    .onAppear {
+        Styler.shared.colorScheme = .dark
     }
 }

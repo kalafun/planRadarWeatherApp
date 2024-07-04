@@ -5,27 +5,50 @@
 //  Created by Tomas Bobko on 03.07.24.
 //
 
+@testable import WeatherApp
+import CoreData
 import XCTest
 
 final class WeatherAppTests: XCTestCase {
 
+    var context: NSManagedObjectContext!
+    var weatherService: WeatherServiceMocked!
+
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        context = PersistenceController.shared.container.viewContext
+        weatherService = WeatherServiceMocked()
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        weatherService = nil
+        try super.tearDownWithError()
     }
 
-    func testExample() throws {
-        
+    func testSearchCities() async throws {
+        let searchViewModel = await SearchCitiesView.ViewModel(moc: context, weatherService: weatherService)
+
+        await searchViewModel.searchCities(name: "Vienna")
+
+        let viennaCity = await searchViewModel.items.first(where: { $0.name.contains("Vienna") })
+        XCTAssertNotNil(viennaCity, "City 'Vienna' not found")
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+    @MainActor
+    func testGetWeatherInformation() async throws {
+        let city = City(context: context)
+        city.name = "Vienna, AT"
+        let weatherInfoViewModel = WeatherDetailView.ViewModel(
+            moc: context,
+            city: city,
+            weatherService: weatherService
+        )
+
+        await weatherInfoViewModel.getWeatherInfo()
+        guard let response = weatherInfoViewModel.weatherInfoResponse else {
+            XCTFail("No weather response")
+            return
         }
-    }
 
+        XCTAssert(response.wind.speed == 32.4)
+    }
 }

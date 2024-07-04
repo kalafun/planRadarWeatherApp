@@ -54,11 +54,11 @@ extension WeatherDetailView {
         init(
             moc: NSManagedObjectContext,
             city: City,
-            weatherServoce: WeatherServiceProtocol = WeatherService()
+            weatherService: WeatherServiceProtocol = WeatherService()
         ) {
             self.moc = moc
             self.city = city
-            self.weatherService = weatherServoce
+            self.weatherService = weatherService
         }
 
         func getWeatherInfo() async {

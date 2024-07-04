@@ -66,11 +66,11 @@ extension WeatherDetailView {
             do {
                 let response = try await weatherService.getWeatherInfo(city: cityName)
                 let timeUpdated = Date()
-                    self.weatherInfoResponse = response
-                    self.timeUpdated = timeUpdated
-                    self.footerText = "weather information for \(cityName) received on".uppercased()
-                    saveWeatherInfo(for: city, weatherInfo: weatherInfoResponse!, tiemUpdated: timeUpdated)
-                    self.isLoading = false
+                self.weatherInfoResponse = response
+                self.timeUpdated = timeUpdated
+                self.footerText = "weather information for \(cityName) received on".uppercased()
+                saveWeatherInfo(for: city, weatherInfo: weatherInfoResponse!, tiemUpdated: timeUpdated)
+                self.isLoading = false
             } catch {
                 print(error)
                 handleError(error: error)

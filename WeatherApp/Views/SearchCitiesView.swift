@@ -25,6 +25,7 @@ struct SearchCitiesView: View {
                         .foregroundStyle(styler.titleColor)
                         .onTapGesture {
                             viewModel.add(cityItem: item)
+                            viewModel.items = []
                             citiesViewModel.fetchCities()
                             dismiss()
                         }
